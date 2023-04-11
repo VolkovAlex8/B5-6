@@ -91,7 +91,7 @@ def check_win(playerpos):
 if __name__ == '__main__':
     print("Приветсвуем в новой игре!")
     while True:
-        ask_game = input("Хотите начать игру, введите Yes если хотите и No - если нет? ").lower()
+        ask_game = input("Хотите начать игру, введите yes если хотите и no - если нет? ").lower()
         if ask_game in answer["да"]:
             print("Новая игра!")
             new_game()
