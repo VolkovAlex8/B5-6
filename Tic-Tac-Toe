@@ -1,0 +1,100 @@
+import sys
+
+position = {'11': 1, '12': 2, '13': 3, '21': 4, '22': 5, '23': 6, '31': 7, '32': 8, '33': 9}
+winner_comb = [[1, 2, 3], [4, 5, 6], [7, 8, 9], [1, 4, 7], [2, 5, 8], [3, 6, 9], [1, 5, 9], [3, 5, 7]]
+answer = {"да": ["y",'да', "yes"], "нет": ["no",'нет', "n"]}
+players_numbers = {'1_player_number' : " ", '2_player_number' : " "}
+
+def board(playerpos):
+    grid = {1: '-' ,2 : '-',3 : '-',4 : '-',5 : '-',6: '-',7: '-',8: '-',9: '-'}
+    for sym, positions in playerpos.items():
+        for pos in positions:
+            grid[pos] = sym
+    print('\n')
+    print('\t  1   2   3')
+    print('\t____________')
+    print('\t1|', "{} | {} | {} ".format(grid[1], grid[2], grid[3]))
+    print('\t2|', "{} | {} | {} ".format(grid[4], grid[5], grid[6]))
+    print('\t3|', "{} | {} | {} ".format(grid[7], grid[8], grid[9]))
+    print('\n')
+
+playersymbol = {1 : " ", 2 : " "}
+
+
+def symbol():
+    L = ['X', 'O']
+    players = []
+    while True:
+        s = input("Введите символ X или O, с которым будете играть - " )
+        if s not in L:
+            print('Неверно, введите пожалуйста символ X или O')
+        else:
+            if s == L[0]:
+                break
+            else:
+                L.reverse()
+                break
+    return L
+
+    
+def players_move(players):
+    while True:
+        for i in players:
+            yield i
+
+def move(who_player_move, playerpos):
+    print(f'Ходить игрок {who_player_move}')
+    choice = input('Введите координаты хода вида NN, где первая цифра - это номер строки, а вторая - номер столбца  для. Строки и столбцы нумеруются слева-направо/сверху вниз - ')
+    choice = choice.strip()
+    choice = ''.join(choice.split())
+    if not choice.isdigit():
+        print('///')
+        return False, playerpos
+    if not choice in position.keys():
+        print('Введите по новой')
+        return False, playerpos
+    playerpos[who_player_move].append(position[choice])
+    return True, playerpos
+
+
+def new_game():
+    players = symbol()       
+    playerpos = {'X' : [], 'O' : []}
+    players_change = iter(players_move(players))
+    who_player_move = next(players_change)
+    coint_of_move = 0
+    while True:
+        board(playerpos)
+        if coint_of_move >= 9:
+            print('Ничья')
+            return None
+        is_corret_move, playerpos = move(who_player_move, playerpos)
+        print(playerpos)
+        result_win = check_win(playerpos)
+        if result_win:
+            print(f'{result_win} победил')
+            return result_win
+        if is_corret_move:
+            who_player_move = next(players_change)
+            coint_of_move += 1
+             
+        
+
+def check_win(playerpos):
+    for x in winner_comb:
+        if all(y in playerpos['X'] for y in x):
+            return 'X'
+        if all(y in playerpos['O'] for y in x):
+            return 'O'
+    return False
+            
+if __name__ == '__main__':
+    print("Приветсвуем в новой игре!")
+    while True:
+        ask_game = input("Хотите начать игру, введите Yes если хотите и No - если нет? ").lower()
+        if ask_game in answer["да"]:
+            print("Новая игра!")
+            new_game()
+        elif ask_game in asnwer["нет"]:
+            print("Выход")
+            sys.exit(0) 
